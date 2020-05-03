@@ -1,8 +1,6 @@
 package com.example.demo.avltree;
-
 import lombok.Getter;
 import lombok.Setter;
-
 
 /**
  *  平衡二叉树
@@ -20,7 +18,6 @@ public class AvlTree {
     /**
      * 添加节点
      * @param value 新节点值
-     * @return 当前节点
      */
     public void insert(int value) {
         insert(value, value);
@@ -30,7 +27,6 @@ public class AvlTree {
      * 添加节点
      * @param value 新节点值
      * @param data 新节点数据
-     * @return 当前节点
      */
     public void insert(int value,Object data){
         TreeNode newNode = new TreeNode(value, data);
@@ -39,18 +35,14 @@ public class AvlTree {
             root = newNode;
             return;
         }
-        // 等于根节点，则 数据赋根节点，直接返回
-        if( root.value == newNode.value){
-            root.data = newNode.data;
-            return;
-        }
 
         // 临时节点
-        TreeNode tempNode = null;
-        int newValue = newNode.value;
+        TreeNode tempNode = root;
         // 当前节点 ，新节点的父节点
         TreeNode parent = root;
-        /**
+
+        int newValue = newNode.value;
+        /*
          * 从根节点一直往下找，每个节点命名为：当前节点
          * 1.新节点 = 当前节点，赋值给当前节点直接返回
          * 2.新节点 < 当前节点，如当前节点左子节点为空直接插入，否则继续往下找
@@ -111,10 +103,10 @@ public class AvlTree {
                 node = node.right;
                 continue;
             }
-            /**
+
+            /*
              * 匹配到删除节点
              */
-
             TreeNode parent = node.parent;
             // 为父节点，且只有一个节点，直接删除父几点
             if (parent == null && node.left == null && node.right == null) {
@@ -128,7 +120,7 @@ public class AvlTree {
                 node = parent;
                 break;
             }
-            /**
+            /*
              * 只有一个子节点，直接把子节点替换到当前位置
              */
             if (node.left == null) {
@@ -139,7 +131,7 @@ public class AvlTree {
                 replaceSubNode(node.left, parent);
                 break;
             }
-            /**
+            /*
              * 有双子节点
              * 用左子节点的的最右节点代替当前节点（及左边最大数 ）
              */
@@ -243,9 +235,9 @@ public class AvlTree {
     }
 
     /**
-     * 查找当前节点里最大的子节点
-     * @param node
-     * @return
+     * 查找当前节点下最大的子节点
+     * @param node 节点
+     * @return 当前节点下最大的子节点
      */
     public TreeNode searchMax(TreeNode node) {
         TreeNode maxNode = node.right;
@@ -258,7 +250,6 @@ public class AvlTree {
 
     /**
      * 平衡节点
-     * @param node
      */
     private void avlNode(TreeNode node) {
         while (node != null) {
@@ -320,7 +311,7 @@ public class AvlTree {
         replaceParentLeft(left.right,node);
         // 当前节点的左子节点替换到当前节点位置
 
-        /**
+        /*
          * 当前节点和原左子节点，更换父子关系。
          * 当前节点成为原左儿子的右儿子，原左儿子成当前节点的父亲
          */
@@ -346,7 +337,7 @@ public class AvlTree {
         // 原右子节点的左子节点 替换到 当前节点的右子节点
         replaceParentRight(right.left,node);
 
-        /**
+        /*
          * 当前节点和原右子节点，更换父子关系。
          * 当前节点成为原右儿子的左儿子，原右儿子成当前节点的父亲
          */
@@ -361,30 +352,28 @@ public class AvlTree {
 
     /**
      * 左右旋
-     * @param node
-     * @return
+     * 先左子节点左旋，再当前节点右旋
+     * @param node 节点
      */
-    private TreeNode leftRightRotate(TreeNode node) {
+    private void leftRightRotate(TreeNode node) {
         TreeNode currentNode = leftRotate(node.left);
         calcHeight(currentNode);
 
         rightRotate(node);
-        return node;
     }
 
     /**
      * 右左旋
-     * @param node
-     * @return
+     * 先右子节点右旋，再当前节点左旋
+     * @param node 接单
      */
-    private TreeNode rightLeftRotate(TreeNode node) {
+    private void rightLeftRotate(TreeNode node) {
         TreeNode currentNode = rightRotate(node.right);
         calcHeight(currentNode);
         leftRotate(node);
-        return node;
     }
 
-    // 计算节点都的左右树高
+    // 计算节点的左右树高
     private void calcHeight(TreeNode node) {
         // 左树高 = 左子节点的高节点+1
         node.leftHeight = (node.left == null ? 0 : Math.max(node.left.leftHeight, node.left.rightHeight)+ 1) ;
@@ -393,8 +382,9 @@ public class AvlTree {
     }
 
 
-
-
+    /**
+     * 打印树状结构
+     */
     public void print() {
         if (root.right != null) {
             printTree(root.right, true, "");
@@ -432,6 +422,7 @@ public class AvlTree {
     /**
      * 二叉树节点
      */
+    @Getter
     static class TreeNode {
 
         /**
@@ -466,6 +457,17 @@ public class AvlTree {
         public TreeNode(int value, Object data) {
             this.value = value;
             this.data = data;
+        }
+
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder("{");
+            sb.append("\"value\":")
+                    .append(value);
+            sb.append(",\"data\":")
+                    .append(data);
+            sb.append('}');
+            return sb.toString();
         }
     }
 }
