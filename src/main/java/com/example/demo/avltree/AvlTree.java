@@ -3,11 +3,12 @@ package com.example.demo.avltree;
 import lombok.Getter;
 import lombok.Setter;
 
-@Setter
-@Getter
+
 /**
  *  平衡二叉树
  */
+@Setter
+@Getter
 public class AvlTree {
 
     /**
@@ -93,13 +94,14 @@ public class AvlTree {
     }
 
     /**
-     * 删除节点
+     * 根据值查找病删除对应节点
      * @param value 删除节点的值
      */
     public void delete(int value) {
 
         TreeNode node = root;
-        while (node!=null) {
+        while (node != null) {
+
             if (value < node.value) {
                 node = node.left;
                 continue;
@@ -188,28 +190,32 @@ public class AvlTree {
     }
 
     /**
-     * 把当前节点替换掉父节点的子节点
-     * @param subNode
-     * @param parentNode
+     * 子节点父节点改成此父节点
+     * 节点不能为空
+     * @param subNode 子节点 不能为空
+     * @param parentNode 父节点
      */
     private void replaceSubNode(TreeNode subNode, TreeNode parentNode) {
-        if(subNode!=null) {
-            subNode.parent = parentNode;
+        if(subNode == null){
+            return;
         }
-        if (parentNode != null && subNode != null) {
+
+        subNode.parent = parentNode;
+
+        if(parentNode!=null) {
             if (subNode.value < parentNode.value) {
                 parentNode.left = subNode;
             } else {
                 parentNode.right = subNode;
             }
         }
-
     }
 
     /**
-     * 把当前节点替换掉父节点的子节点
-     * @param subNode
-     * @param parentNode
+     * 此父节点的左子节点更换成此子节点
+     * 已知是替换父节点的左子节点
+     * @param subNode 子节点 可为空
+     * @param parentNode 父节点 可为空
      */
     private void replaceParentLeft(TreeNode subNode, TreeNode parentNode) {
         if(parentNode!=null) {
@@ -221,9 +227,10 @@ public class AvlTree {
 
     }
     /**
-     * 把当前节点替换掉父节点的子节点
-     * @param subNode
-     * @param parentNode
+     * 此父节点的右子节点更换成此子节点
+     * 已知是替换父节点的右子节点
+     * @param subNode 子节点 可为空
+     * @param parentNode 父节点 可为空
      */
     private void replaceParentRight(TreeNode subNode, TreeNode parentNode) {
         if(parentNode!=null) {
@@ -302,41 +309,53 @@ public class AvlTree {
 
     /**
      * 右旋
-     * @param node
-     * @return 右旋节点
+     * @param node 被选转的的节点，及当前节点
+     * @return 当前节点
      */
     private TreeNode rightRotate(TreeNode node) {
-        TreeNode parent = node.parent;
 
-        TreeNode leftNode = node.left;
-        leftNode.parent = node.parent;
-        node.parent = leftNode;
+        // 当前节点的右子节点
+        TreeNode left = node.left;
+        // 原左子节点的右子节点 替换到 当前节点的左子节点
+        replaceParentLeft(left.right,node);
+        // 当前节点的左子节点替换到当前节点位置
 
-        node.left = leftNode.right;
-        replaceSubNode(leftNode.right, node);
+        /**
+         * 当前节点和原左子节点，更换父子关系。
+         * 当前节点成为原左儿子的右儿子，原左儿子成当前节点的父亲
+         */
 
-        leftNode.right = node;
-        replaceSubNode(leftNode, parent);
+        // 当前节点的左子节点父节点 更换成 当前节点父节点
+        replaceSubNode(left,node.parent);
+
+        // 当前节点的原左子节点 替换成 当前节点的父节点，原左子节点的右子节点 更换成 当前节点
+        replaceParentRight(node, left);
+
         return node;
     }
 
     /**
      * 左旋
-     * @param node
-     * @return 左旋节点
+     * @param node 被选转的的节点，及当前节点
+     * @return 当前节点
      */
     private TreeNode leftRotate(TreeNode node) {
-        TreeNode parent = node.parent;
 
-        TreeNode rightNode = node.right;
-        rightNode.parent = parent;
-        node.parent = rightNode;
+        // 当前节点的右子节点
+        TreeNode right = node.right;
+        // 原右子节点的左子节点 替换到 当前节点的右子节点
+        replaceParentRight(right.left,node);
 
-        node.right = rightNode.left;
-        replaceSubNode(rightNode.left, node);
+        /**
+         * 当前节点和原右子节点，更换父子关系。
+         * 当前节点成为原右儿子的左儿子，原右儿子成当前节点的父亲
+         */
 
-        rightNode.left = node;
-        replaceSubNode(rightNode, parent);
+        // 当前节点的右子节点父节点 更换成 当前节点父节点，
+        replaceSubNode(right,node.parent);
+        // 当前节点的原右子节点 更换成 当前节点的父节点，原右子节点的左子节点 更换成 当前节点
+        replaceParentLeft(node, right);
+
         return node;
     }
 
@@ -413,7 +432,7 @@ public class AvlTree {
     /**
      * 二叉树节点
      */
-    private static class TreeNode {
+    static class TreeNode {
 
         /**
          * 值
@@ -448,7 +467,5 @@ public class AvlTree {
             this.value = value;
             this.data = data;
         }
-
-
     }
 }
