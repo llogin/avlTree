@@ -252,20 +252,25 @@ public class AvlTree {
      * 平衡节点
      */
     private void avlNode(TreeNode node) {
+
+        /*
+           从当前节点开始，循环向上找父节点，是否需要左旋右旋来平衡
+         */
         while (node != null) {
 
-            // 左树高 = 左子节点的高节点+1
-            int leftHeight = (node.left == null ? 0 : Math.max(node.left.leftHeight, node.left.rightHeight)+ 1) ;
-            // 右树高 = 右子节点的高节点+1
-            int rightHeight = (node.right == null ? 0 : Math.max(node.right.leftHeight, node.right.rightHeight) + 1);
+            // 左树高 = 左子节点的高节+1
+            int leftHeight = node.left == null ? 0 : node.left.height + 1;
+            // 右树高 = 右子节点的高+1
+            int rightHeight = node.right == null ? 0 : node.right.height + 1;
+            // 平衡因子，左右树高相差：2，需要旋转
             int factor = leftHeight - rightHeight;
 
             if (factor == 2) {// 左树比有高
+                TreeNode left = node.left;
                 // L子节点的L子节点高
-                int leftLeftHeight = node.left == null ? 0 : node.left.leftHeight;
+                int leftLeftHeight = left.left == null ? 0 : left.left.height + 1;
                 // L子节点的R子节点高
-                int leftRightHeight = node.left == null ? 0 : node.left.rightHeight;
-
+                int leftRightHeight = left.right == null ? 0 : left.right.height + 1;
                 if (leftLeftHeight > leftRightHeight) {
                     // RR ： L子节点的L子节点 > L子节点的R子节点  --> 右旋
                     rightRotate(node);
@@ -276,10 +281,11 @@ public class AvlTree {
                 }
 
             }else if(factor==-2) {// 右树比左树高
+                TreeNode right = node.right;
                 // R子节点的R子节点高
-                int rightRightHeight = node.right == null ? 0 : node.right.rightHeight;
+                int rightRightHeight = right.right == null ? 0 : right.right.height + 1;
                 // R子节点的L子节点高
-                int rightLeftHeight = node.right == null ? 0 : node.right.leftHeight;
+                int rightLeftHeight = right.left == null ? 0 : right.left.height + 1;
                 if (rightRightHeight > rightLeftHeight){
                     // LL ：R子节点的R子节点 大于 R子节点的L子节点 --> 左旋
                     leftRotate(node);
@@ -375,10 +381,11 @@ public class AvlTree {
 
     // 计算节点的左右树高
     private void calcHeight(TreeNode node) {
-        // 左树高 = 左子节点的高节点+1
-        node.leftHeight = (node.left == null ? 0 : Math.max(node.left.leftHeight, node.left.rightHeight)+ 1) ;
-        // 右树高 = 右子节点的高节点+1
-        node.rightHeight = (node.right == null ? 0 : Math.max(node.right.leftHeight, node.right.rightHeight) + 1);
+        // 左树高 = 左子节点的高+1
+        int leftHeight = node.left == null ? 0 : node.left.height + 1;
+        // 右树高 = 右子节点的高+1
+        int rightHeight = node.right == null ? 0 : node.right.height + 1;
+        node.height = Math.max(leftHeight, rightHeight);
     }
 
 
@@ -432,13 +439,10 @@ public class AvlTree {
 
         private Object data;
         /**
-         * 左树高度
+         * 节点高度，算的是最深的子节点
+         * 默认 0
          */
-        private int leftHeight;
-        /**
-         * 右树高度
-         */
-        private int rightHeight;
+        private int height;
         /**
          * 父节点
          */
@@ -466,6 +470,8 @@ public class AvlTree {
                     .append(value);
             sb.append(",\"data\":")
                     .append(data);
+            sb.append(",\"height\":")
+                    .append(height);
             sb.append('}');
             return sb.toString();
         }
