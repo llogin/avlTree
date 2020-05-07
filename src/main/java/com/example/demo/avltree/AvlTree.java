@@ -184,20 +184,21 @@ public class AvlTree {
     /**
      * 子节点父节点改成此父节点
      * 节点不能为空
-     * @param subNode 子节点 不能为空
+     * @param subNode 已知有子节点 不能为空
      * @param parentNode 父节点
      */
     private void replaceSubNode(TreeNode subNode, TreeNode parentNode) {
-        if(subNode == null){
+        if (subNode == null){
             return;
         }
-
+        // 子节点的父节点替换成新的父节点
         subNode.parent = parentNode;
-
-        if(parentNode!=null) {
+        if (parentNode!=null) {
+            // 子节点比父节点小，子节点在是父节点则左子树，父节点的左子节点替换成新的子节点
             if (subNode.value < parentNode.value) {
                 parentNode.left = subNode;
             } else {
+                // 子节点比父节点大，子节点在是父节点则右子树，父节点的右子节点替换成新的子节点
                 parentNode.right = subNode;
             }
         }
@@ -210,14 +211,14 @@ public class AvlTree {
      * @param parentNode 父节点 可为空
      */
     private void replaceParentLeft(TreeNode subNode, TreeNode parentNode) {
-        if(parentNode!=null) {
+        if (parentNode!=null) {
             parentNode.left = subNode;
         }
         if (subNode != null) {
             subNode.parent = parentNode;
         }
-
     }
+
     /**
      * 此父节点的右子节点更换成此子节点
      * 已知是替换父节点的右子节点
@@ -225,15 +226,14 @@ public class AvlTree {
      * @param parentNode 父节点 可为空
      */
     private void replaceParentRight(TreeNode subNode, TreeNode parentNode) {
-        if(parentNode!=null) {
+        if (parentNode!=null) {
             parentNode.right = subNode;
         }
         if (subNode != null) {
             subNode.parent = parentNode;
         }
-
     }
-
+    
     /**
      * 查找当前节点下最大的子节点
      * @param node 节点
@@ -294,7 +294,7 @@ public class AvlTree {
                     rightLeftRotate(node);
                 }
             }
-            // 重新节点左右树高
+            // 重新节点高度
             calcHeight(node);
 
             if (node.parent == null) {
@@ -306,38 +306,32 @@ public class AvlTree {
 
     /**
      * 右旋
-     * @param node 被选转的的节点，及当前节点
+     * @param node 被旋转的节点，及当前节点
      * @return 当前节点
      */
     private TreeNode rightRotate(TreeNode node) {
-
         // 当前节点的右子节点
         TreeNode left = node.left;
         // 原左子节点的右子节点 替换到 当前节点的左子节点
         replaceParentLeft(left.right,node);
-        // 当前节点的左子节点替换到当前节点位置
 
         /*
          * 当前节点和原左子节点，更换父子关系。
          * 当前节点成为原左儿子的右儿子，原左儿子成当前节点的父亲
          */
-
         // 当前节点的左子节点父节点 更换成 当前节点父节点
         replaceSubNode(left,node.parent);
 
         // 当前节点的原左子节点 替换成 当前节点的父节点，原左子节点的右子节点 更换成 当前节点
         replaceParentRight(node, left);
-
         return node;
     }
-
     /**
      * 左旋
      * @param node 被选转的的节点，及当前节点
      * @return 当前节点
      */
     private TreeNode leftRotate(TreeNode node) {
-
         // 当前节点的右子节点
         TreeNode right = node.right;
         // 原右子节点的左子节点 替换到 当前节点的右子节点
@@ -347,39 +341,42 @@ public class AvlTree {
          * 当前节点和原右子节点，更换父子关系。
          * 当前节点成为原右儿子的左儿子，原右儿子成当前节点的父亲
          */
-
         // 当前节点的右子节点父节点 更换成 当前节点父节点，
         replaceSubNode(right,node.parent);
         // 当前节点的原右子节点 更换成 当前节点的父节点，原右子节点的左子节点 更换成 当前节点
         replaceParentLeft(node, right);
-
         return node;
     }
 
     /**
      * 左右旋
      * 先左子节点左旋，再当前节点右旋
-     * @param node 节点
+     * @param node 当前节点
      */
     private void leftRightRotate(TreeNode node) {
+        // 最低不平衡节点的左子节点左旋
         TreeNode currentNode = leftRotate(node.left);
+        // 重新计算有左子节点树高
         calcHeight(currentNode);
-
+        // 最低不平衡节点右旋
         rightRotate(node);
     }
 
     /**
      * 右左旋
      * 先右子节点右旋，再当前节点左旋
-     * @param node 接单
+     * @param node 当前节点
      */
     private void rightLeftRotate(TreeNode node) {
+        // 最低不平衡节点的右子节点右旋
         TreeNode currentNode = rightRotate(node.right);
+        // 重新计算右子节点树高
         calcHeight(currentNode);
+        // 最低不平衡节点左旋
         leftRotate(node);
     }
 
-    // 计算节点的左右树高
+    // 计算节点的高度
     private void calcHeight(TreeNode node) {
         // 左树高 = 左子节点的高+1
         int leftHeight = node.left == null ? 0 : node.left.height + 1;
