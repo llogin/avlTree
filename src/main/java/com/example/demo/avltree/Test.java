@@ -20,7 +20,8 @@ public class Test {
 
         tree.insert(8);
         tree.print();
-
+        tree.delete(5);
+        tree.print();
         tree.insert(13);
         tree.insert(12);
         tree.print();

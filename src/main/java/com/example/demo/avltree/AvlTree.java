@@ -233,7 +233,7 @@ public class AvlTree {
             subNode.parent = parentNode;
         }
     }
-    
+
     /**
      * 查找当前节点下最大的子节点
      * @param node 节点
@@ -271,8 +271,8 @@ public class AvlTree {
                 int leftLeftHeight = left.left == null ? 0 : left.left.height + 1;
                 // L子节点的R子节点高
                 int leftRightHeight = left.right == null ? 0 : left.right.height + 1;
-                if (leftLeftHeight > leftRightHeight) {
-                    // RR ： L子节点的L子节点 > L子节点的R子节点  --> 右旋
+                if (leftLeftHeight >= leftRightHeight) {
+                    // RR ： L子节点的L子节点 >= L子节点的R子节点  --> 右旋
                     rightRotate(node);
                 }else {
                     // LR 否则左右旋
@@ -286,8 +286,8 @@ public class AvlTree {
                 int rightRightHeight = right.right == null ? 0 : right.right.height + 1;
                 // R子节点的L子节点高
                 int rightLeftHeight = right.left == null ? 0 : right.left.height + 1;
-                if (rightRightHeight > rightLeftHeight){
-                    // LL ：R子节点的R子节点 大于 R子节点的L子节点 --> 左旋
+                if (rightRightHeight >= rightLeftHeight){
+                    // LL ：R子节点的R子节点 >= R子节点的L子节点 --> 左旋
                     leftRotate(node);
                 }else {
                     // RL 否则右左旋
